@@ -2,6 +2,7 @@
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include <algorithm>
+#include <cmath>
 #include <glm/glm.hpp>                   
 #include <glm/gtc/matrix_transform.hpp>    
 										  
@@ -77,7 +78,6 @@ void Triangle::SetColor(float r, float g, float b){
 	m_VertexArray->SetData(m_Vertices.data(), m_Vertices.size()*sizeof(float) , &m_BufferLayout);
 }
 
-//helper for calculating the sign of the vector product
 float sign(float x1, float y1, float x2, float y2, float x3, float y3) {
     return (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3);
 }
@@ -123,6 +123,50 @@ void Triangle::Translate(float dx, float dy) {
     glm::vec3 translationVector(dx, dy, 0.0f);
 
     m_ModelMatrix = glm::translate(m_ModelMatrix, translationVector); 
+}
+
+void Triangle::Rotate(float angle) {
+    float centerX = (m_Vertices[0] + m_Vertices[6] + m_Vertices[12]) / 3.0f;
+    float centerY = (m_Vertices[1] + m_Vertices[7] + m_Vertices[13]) / 3.0f;
+    
+    glm::mat4 rotateMatrix = glm::mat4(1.0f);
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(centerX, centerY, 0.0f));
+    rotateMatrix = glm::rotate(rotateMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * rotateMatrix;
+}
+
+void Triangle::Scale(float sx, float sy) {
+    float centerX = (m_Vertices[0] + m_Vertices[6] + m_Vertices[12]) / 3.0f;
+    float centerY = (m_Vertices[1] + m_Vertices[7] + m_Vertices[13]) / 3.0f;
+    
+    glm::mat4 scaleMatrix = glm::mat4(1.0f);
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(centerX, centerY, 0.0f));
+    scaleMatrix = glm::scale(scaleMatrix, glm::vec3(sx, sy, 1.0f));
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * scaleMatrix;
+}
+
+float Triangle::GetArea() const {
+    float x1 = m_Vertices[0], y1 = m_Vertices[1];
+    float x2 = m_Vertices[6], y2 = m_Vertices[7];
+    float x3 = m_Vertices[12], y3 = m_Vertices[13];
+    
+    return std::abs((x1*(y2 - y3) + x2*(y3 - y1) + x3*(y1 - y2)) / 2.0f);
+}
+
+float Triangle::GetPerimeter() const {
+    float x1 = m_Vertices[0], y1 = m_Vertices[1];
+    float x2 = m_Vertices[6], y2 = m_Vertices[7];
+    float x3 = m_Vertices[12], y3 = m_Vertices[13];
+    
+    float side1 = std::sqrt((x2-x1)*(x2-x1) + (y2-y1)*(y2-y1));
+    float side2 = std::sqrt((x3-x2)*(x3-x2) + (y3-y2)*(y3-y2));
+    float side3 = std::sqrt((x1-x3)*(x1-x3) + (y1-y3)*(y1-y3));
+    
+    return side1 + side2 + side3;
 }
 
 Triangle::~Triangle(){

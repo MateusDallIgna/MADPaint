@@ -2,6 +2,8 @@
 #include "BufferLayout.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
+#include <algorithm>
+#include <cmath>
 #include <glm/glm.hpp>                    
 #include <glm/gtc/matrix_transform.hpp>  
 
@@ -98,6 +100,42 @@ void Rectangle::Translate(float dx, float dy)
 
 }
 
+void Rectangle::Rotate(float angle) {
+    float centerX = (m_AnchorX + m_CurrentX) / 2.0f;
+    float centerY = (m_AnchorY + m_CurrentY) / 2.0f;
+    
+    glm::mat4 rotateMatrix = glm::mat4(1.0f);
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(centerX, centerY, 0.0f));
+    rotateMatrix = glm::rotate(rotateMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * rotateMatrix;
+}
+
+void Rectangle::Scale(float sx, float sy) {
+    float centerX = (m_AnchorX + m_CurrentX) / 2.0f;
+    float centerY = (m_AnchorY + m_CurrentY) / 2.0f;
+    
+    glm::mat4 scaleMatrix = glm::mat4(1.0f);
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(centerX, centerY, 0.0f));
+    scaleMatrix = glm::scale(scaleMatrix, glm::vec3(sx, sy, 1.0f));
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * scaleMatrix;
+}
+
+float Rectangle::GetArea() const {
+    float width = std::abs(m_CurrentX - m_AnchorX);
+    float height = std::abs(m_CurrentY - m_AnchorY);
+    return width * height;
+}
+
+float Rectangle::GetPerimeter() const {
+    float width = std::abs(m_CurrentX - m_AnchorX);
+    float height = std::abs(m_CurrentY - m_AnchorY);
+    return 2.0f * (width + height);
+}
+
 Rectangle::~Rectangle(){
 	delete m_VertexArray;
 	delete m_IndexBuffer;
@@ -105,4 +143,4 @@ Rectangle::~Rectangle(){
 
 
 void Rectangle::AddPoint(double x, double y){}
-void::Rectangle::FinalizeShape(){}
+void Rectangle::FinalizeShape(){}

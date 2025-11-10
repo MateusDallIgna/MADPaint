@@ -68,8 +68,6 @@ int Application::GetWidth(){
 
 void Application::SetupGL(){
 	glViewport(0, 0, m_Width, m_Height);
-
-	//Back Ground Color
 	glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 	float aspectRatio = (float)m_Width / (float)m_Height;

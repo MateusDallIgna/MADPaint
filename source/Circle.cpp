@@ -134,6 +134,38 @@ void Circle::Translate(float dx, float dy) {
     m_ModelMatrix = glm::translate(m_ModelMatrix, translationVector); 
 }
 
+void Circle::Rotate(float angle) {
+    float centerX = m_AnchorX;
+    float centerY = m_AnchorY;
+    
+    glm::mat4 rotateMatrix = glm::mat4(1.0f);
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(centerX, centerY, 0.0f));
+    rotateMatrix = glm::rotate(rotateMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * rotateMatrix;
+}
+
+void Circle::Scale(float sx, float sy) {
+    float centerX = m_AnchorX;
+    float centerY = m_AnchorY;
+    
+    glm::mat4 scaleMatrix = glm::mat4(1.0f);
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(centerX, centerY, 0.0f));
+    scaleMatrix = glm::scale(scaleMatrix, glm::vec3(sx, sy, 1.0f));
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * scaleMatrix;
+}
+
+float Circle::GetArea() const {
+    return (float)M_PI * m_Radius * m_Radius;
+}
+
+float Circle::GetPerimeter() const {
+    return 2.0f * (float)M_PI * m_Radius;
+}
+
 Circle::~Circle(){
 	delete m_VertexArray;
 	delete m_IndexBuffer;

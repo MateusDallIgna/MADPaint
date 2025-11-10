@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h> 
 #include <GL/glu.h>
 #include <iostream>
+#include <cmath>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -67,6 +68,82 @@ void Polygon::Translate(float dx, float dy) {
     m_ModelMatrix = glm::translate(m_ModelMatrix, translationVector); 
 }
 
+void Polygon::Rotate(float angle) {
+    int numVertices = m_Vertices.size() / 6;
+    if (numVertices == 0) return;
+    
+    float centerX = 0.0f;
+    float centerY = 0.0f;
+    for (int i = 0; i < numVertices; i++) {
+        centerX += m_Vertices[i * 6 + 0];
+        centerY += m_Vertices[i * 6 + 1];
+    }
+    centerX /= numVertices;
+    centerY /= numVertices;
+    
+    glm::mat4 rotateMatrix = glm::mat4(1.0f);
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(centerX, centerY, 0.0f));
+    rotateMatrix = glm::rotate(rotateMatrix, angle, glm::vec3(0.0f, 0.0f, 1.0f));
+    rotateMatrix = glm::translate(rotateMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * rotateMatrix;
+}
+
+void Polygon::Scale(float sx, float sy) {
+    int numVertices = m_Vertices.size() / 6;
+    if (numVertices == 0) return;
+    
+    float centerX = 0.0f;
+    float centerY = 0.0f;
+    for (int i = 0; i < numVertices; i++) {
+        centerX += m_Vertices[i * 6 + 0];
+        centerY += m_Vertices[i * 6 + 1];
+    }
+    centerX /= numVertices;
+    centerY /= numVertices;
+    
+    glm::mat4 scaleMatrix = glm::mat4(1.0f);
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(centerX, centerY, 0.0f));
+    scaleMatrix = glm::scale(scaleMatrix, glm::vec3(sx, sy, 1.0f));
+    scaleMatrix = glm::translate(scaleMatrix, glm::vec3(-centerX, -centerY, 0.0f));
+    
+    m_ModelMatrix = m_ModelMatrix * scaleMatrix;
+}
+
+float Polygon::GetArea() const {
+    int numVertices = m_Vertices.size() / 6;
+    if (numVertices < 3) return 0.0f;
+    
+    float area = 0.0f;
+    for (int i = 0; i < numVertices; i++) {
+        int j = (i + 1) % numVertices;
+        float xi = m_Vertices[i * 6 + 0];
+        float yi = m_Vertices[i * 6 + 1];
+        float xj = m_Vertices[j * 6 + 0];
+        float yj = m_Vertices[j * 6 + 1];
+        area += xi * yj - xj * yi;
+    }
+    return std::abs(area) / 2.0f;
+}
+
+float Polygon::GetPerimeter() const {
+    int numVertices = m_Vertices.size() / 6;
+    if (numVertices < 2) return 0.0f;
+    
+    float perimeter = 0.0f;
+    for (int i = 0; i < numVertices; i++) {
+        int j = (i + 1) % numVertices;
+        float xi = m_Vertices[i * 6 + 0];
+        float yi = m_Vertices[i * 6 + 1];
+        float xj = m_Vertices[j * 6 + 0];
+        float yj = m_Vertices[j * 6 + 1];
+        float dx = xj - xi;
+        float dy = yj - yi;
+        perimeter += std::sqrt(dx * dx + dy * dy);
+    }
+    return perimeter;
+}
+
 void Polygon::UpdateVertices(double mouseX, double mouseY){
     // placeholder
 }
@@ -101,9 +178,6 @@ bool Polygon::IsInside(float ndcX, float ndcY) const{
 		float v_j_y = m_Vertices[j * 6 + 1]; 
 
 		if ( ((v_i_y > ndcY) != (v_j_y > ndcY)) && (ndcX < (v_j_x - v_i_x) * (ndcY - v_i_y) / (v_j_y - v_i_y) + v_i_x) ){
-
-
-			//If our radius crosses an odd number of edges at the end of the check, this variable will be true.
 			isInside = !isInside;
 		}
 
