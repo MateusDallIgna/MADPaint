@@ -24,6 +24,13 @@ public:
 	void SetColor(float r, float g, float b);
     bool IsInside(float ndcX, float ndcY) const;
 
+    const glm::mat4& GetModelMatrix() const;
+	void Translate(float dx, float dy);
+	void Rotate(float angle);
+	void Scale(float sx, float sy);
+	float GetArea() const;
+	float GetPerimeter() const;
+
 private:
 
     std::vector<float> m_Vertices;
@@ -40,5 +47,6 @@ private:
 
 	bool m_ShapeIsFilled;
 
+    glm::mat4 m_ModelMatrix;
 
 };

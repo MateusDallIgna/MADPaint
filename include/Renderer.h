@@ -6,7 +6,7 @@
 class Renderer{
 
 public:
-	void Draw(const VertexArray& VertexArray, const IndexBuffer& IndexBuffer, const Shader& Shader, GLenum DrawnMode);
+	void Draw(const VertexArray& VertexArray, const IndexBuffer& IndexBuffer, GLenum DrawnMode);
 	void Unbind(const VertexArray& vertexarray, const IndexBuffer& IndexBuffer, const Shader& shader);
 
 private:

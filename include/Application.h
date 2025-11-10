@@ -1,4 +1,5 @@
 #pragma once
+#include <glm/glm.hpp>
 
 struct GLFWwindow;
 
@@ -15,6 +16,8 @@ public:
 	int GetWidth();
 	int GetHeight();
 
+	const glm::mat4& GetProjectionMatrix() const;
+
 private:
 
 	void InitGLFW();
@@ -28,4 +31,5 @@ private:
 	int m_Height;
 	const char* m_Title;
 
+	glm::mat4 m_ProjectionMatrix;
 };
