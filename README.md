@@ -24,7 +24,7 @@ make clean    # Remove build artifacts
 make help     # Show help message
 ```
 
-The executable will be created in the root directory as `exec4`.
+The executable will be created in the root directory as `Madpaint`.
 
 ### Manual Compilation
 
@@ -38,7 +38,7 @@ g++ source/main.cpp source/Application.cpp source/Renderer.cpp source/Shader.cpp
     source/glad.c \
     -I./include \
     -lglfw -lGL -lGLU -ldl -lpthread -lwayland-client -lwayland-cursor -lwayland-egl -lX11 \
-    -std=c++17 -o exec4
+    -std=c++17 -o Madpaint
 ```
 
 **Note**: When compiling manually, make sure to:
@@ -95,7 +95,7 @@ When you start the program, all controls will be displayed in the terminal.
 After building, run the executable from the root directory:
 
 ```bash
-./exec4
+./Madpaint
 ```
 
 The program will display all controls in the terminal when it starts.
@@ -103,7 +103,7 @@ The program will display all controls in the terminal when it starts.
 ## Project Structure
 
 ```
-Paint_1/
+MADPaint/
 ├── include/          # Header files
 ├── source/           # Source files
 ├── shaders/          # Shader files
